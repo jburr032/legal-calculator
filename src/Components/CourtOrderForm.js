@@ -1,7 +1,6 @@
 import React, { Component } from "react";
-import { utilDays, utilMonths, alculateLegalDates } from "./CalculatorUtils";
-import { Header, Portal, Segment } from "semantic-ui-react";
-import { calculateLegalDates, convertDateToString } from "./CalculatorUtils";
+import { Header, Segment } from "semantic-ui-react";
+import { calculateLegalDates, utilMonths, convertDateToString } from "./CalculatorUtils";
 
 const uuidv4 = require("uuid/v4");
 export default class CourtOrderForm extends Component{
@@ -43,13 +42,15 @@ export default class CourtOrderForm extends Component{
     calculateCourtOrderDates = () => {
 
         const courtOrderObj = {
+               objId          : uuidv4(), 
                eventName      : this.state.eventName,
-               selectedDate    : this.state.selectedDate,
+               selectedDate   : this.state.selectedDate,
                numDays        : Number(this.state.numDays),
                clearDays      : this.state.clearDays,
                calculatedDate : null,
            }
-
+           console.log(courtOrderObj.objId);
+           
            const daySum = courtOrderObj.numDays;
            const clearDays = courtOrderObj.clearDays;
            const calculateFrom = courtOrderObj.selectedDate.getTime();

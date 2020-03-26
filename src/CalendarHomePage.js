@@ -74,13 +74,13 @@ export default class CalendarHomePage extends Component{
         // Run an interval then turn off the loading screen
         setTimeout(() => {
             this.setState({ showCprLoadingPage: !this.state.showCprLoadingPage, showCprPage: !this.state.showCprPage });
-          }, 3300);
+          }, 2600);
       };
     
     handleLoadingCourtOrder = () => {
         setTimeout(() => {
             this.setState({ showCourtOrderLoadingPage: !this.state.showCourtOrderLoadingPage, showCourtOrderPage: !this.state.showCourtOrderPage });
-        }, 3300)
+        }, 2600)
     }
 
 
@@ -136,8 +136,10 @@ export default class CalendarHomePage extends Component{
                     </Grid.Row>
                 </Grid>
             </Container>}
-            {(showCprLoadingPage || showCourtOrderLoadingPage) && <Container style={{width: "650px", padding: "3.5%"}}>
-                                                                    <LoadingCalendarPage 
+            
+            {(showCprLoadingPage || showCourtOrderLoadingPage) && 
+            <Container style={{width: "650px", padding: "3.5%"}}>
+               <LoadingCalendarPage 
                                                                         calendarStyling={{ 
                                                                         marginTop: "100px",
                                                                         border: "solid #ffe0ed", 

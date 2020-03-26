@@ -56,32 +56,21 @@ export default class CourtOrdersApp extends Component{
         
     };
 
+    onDeleteClick = (event) => {
+        const clickedLegalEvent = event.target.id;
+        let updatedCourtOrderObjArr = this.state.courtOrderObjArr;
+        
+        updatedCourtOrderObjArr = updatedCourtOrderObjArr.filter((courtOrderObj) => courtOrderObj.objId !== clickedLegalEvent);
+
+        this.setState({ courtOrderObjArr: updatedCourtOrderObjArr });
+    };
+    
     render(){
         
         const open = this.state.modalOpen;
         const dashboardContainerStyle = {width: "950px", padding: "3.5%"};
         
-         const showUserInputs = this.state.courtOrderObjArr.map((courtOrderObj) =>
-         {
-                        return( <li>
-                                <i aria-hidden="true" className="remove-event delete icon " style={{ marginLeft: "100%" }}></i>
-                                 <div className="event" >
-                                    <div className="label"><i aria-hidden="true" className="law icon"></i></div>
-                                        <div className="content" style={{ width: "100%" }}>
-                                                <div className="date">
-                                                    {courtOrderObj.eventName}
-                                                </div>
-                                                <div className="summary">Due on {courtOrderObj.calculatedDate}</div>
-                                                <div className="text extra">
-                                                    {courtOrderObj.numDays/86400000} days before {courtOrderObj.selectedDate}
-                                                    <br />
-                                                    {courtOrderObj.clearDays ? "Clear Days" : null}
-                                                </div>
-                                                
-                                        </div>
-                                </div>
-                             </li>
-        )});             
+         const showUserInputs = this.state.courtOrderObjArr.map((courtOrderObj) => <LegalEventItem courtOrderObj={courtOrderObj} deleteClick={this.onDeleteClick} />);             
             
         return(
             <Container style={dashboardContainerStyle}>
@@ -110,9 +99,7 @@ export default class CourtOrdersApp extends Component{
                     </Grid.Column>
 
                     <Grid.Column width={6}>
-                        <div className="ui feed">
-                            <ul>{showUserInputs}</ul>
-                        </div>
+                            {showUserInputs}
                     </Grid.Column>
                 </Grid.Row>
              </Grid>
@@ -121,3 +108,26 @@ export default class CourtOrdersApp extends Component{
     }
 }
 
+function LegalEventItem(props){
+    const { courtOrderObj, deleteClick }= props;
+
+    return(
+        <div className="ui feed">
+              <div className="event" >                                    
+                 <div className="content" style={{ width: "100%" }}>      
+                        <div className="summary"> 
+                            <i aria-hidden="true" class="law icon"></i>                        
+                                 {courtOrderObj.eventName}
+                            <i aria-hidden="true" className="remove-event delete icon " id={courtOrderObj.objId} onClick={deleteClick} style={{ float: "right", }}></i>
+                        </div>
+                        <div className="summary">Due on {courtOrderObj.calculatedDate}</div>
+                            <div className="text extra">
+                                {courtOrderObj.numDays/86400000} days before {courtOrderObj.selectedDate}
+                                <br />
+                                {courtOrderObj.clearDays ? <div class="ui red label">Clear Days</div> : null}
+                            </div>
+                        </div>
+                    </div>
+            </div> 
+    );
+}
