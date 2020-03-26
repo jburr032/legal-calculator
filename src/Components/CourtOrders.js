@@ -4,13 +4,10 @@ import Calendar from "react-calendar";
 import CourtOrderForm from "./CourtOrderForm";
 import "./styles.css";
 
-class CourtOrdersApp extends Component{
+export default class CourtOrdersApp extends Component{
     state = {
         date              : new Date(),
         courtOrderObjArr  : [],    
-        eventList: [],
-        dateList: [],
-        daysList: [],
         modalOpen         : false,
         calendarDisabled  : false,
         fetchedHolidaysInMs : this.props.fetchedHolidaysInMs,
@@ -54,23 +51,10 @@ class CourtOrdersApp extends Component{
          const courtOrderObjArr = this.state.courtOrderObjArr.map(obj => Object.assign({}, obj));
          
          courtOrderObjArr.push(courtOrderObj);
-
-         console.log(`onSubmit: setting the state ${courtOrderObj}`);   
          
          this.setState({ courtOrderObjArr });
         
-        
-        /*const eventList = this.state.eventList;
-        const dateList = this.state.dateList;
-        const daysList = this.state.daysList;
-        
-        eventList.push(eventName);
-        dateList.push(numberOfDays);
-        daysList.push(updatedDay);
-        
-        this.setState({ eventList, dateList, daysList});*/
-        
-    }
+    };
 
     render(){
         
@@ -79,22 +63,24 @@ class CourtOrdersApp extends Component{
         
          const showUserInputs = this.state.courtOrderObjArr.map((courtOrderObj) =>
          {
-                        return( <div className="event" >
+                        return( <li>
+                                <i aria-hidden="true" className="remove-event delete icon " style={{ marginLeft: "100%" }}></i>
+                                 <div className="event" >
                                     <div className="label"><i aria-hidden="true" className="law icon"></i></div>
                                         <div className="content" style={{ width: "100%" }}>
                                                 <div className="date">
                                                     {courtOrderObj.eventName}
-                                                    <i aria-hidden="true" className="remove-event delete icon " style={{ marginLeft: "70%" }}></i>
                                                 </div>
-                                                <div className="summary">Due on {String(new Date(courtOrderObj.calculatedDate))}</div>
+                                                <div className="summary">Due on {courtOrderObj.calculatedDate}</div>
                                                 <div className="text extra">
-                                                    {courtOrderObj.numDays/86400000} days before {courtOrderObj.selectedDay}
+                                                    {courtOrderObj.numDays/86400000} days before {courtOrderObj.selectedDate}
                                                     <br />
                                                     {courtOrderObj.clearDays ? "Clear Days" : null}
                                                 </div>
                                                 
                                         </div>
                                 </div>
+                             </li>
         )});             
             
         return(
@@ -125,7 +111,7 @@ class CourtOrdersApp extends Component{
 
                     <Grid.Column width={6}>
                         <div className="ui feed">
-                            {showUserInputs}
+                            <ul>{showUserInputs}</ul>
                         </div>
                     </Grid.Column>
                 </Grid.Row>
@@ -135,4 +121,3 @@ class CourtOrdersApp extends Component{
     }
 }
 
-export default CourtOrdersApp;

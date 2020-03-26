@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { utilDays, utilMonths, alculateLegalDates } from "./CalculatorUtils";
 import { Header, Portal, Segment } from "semantic-ui-react";
-import { calculateLegalDates } from "./CalculatorUtils";
+import { calculateLegalDates, convertDateToString } from "./CalculatorUtils";
 
 const uuidv4 = require("uuid/v4");
 export default class CourtOrderForm extends Component{
@@ -33,7 +33,9 @@ export default class CourtOrderForm extends Component{
     };
 
     handleDaySelect = (event) => {
-        const numDays = Number(event.target.value*86400000);
+        // Need to override the multiplication if 0 is selected 
+        let numDays = Number(event.target.value);
+        numDays = numDays === 0 ? 0 : numDays*86400000;
         this.setState({ numDays });
 
     };
@@ -54,8 +56,6 @@ export default class CourtOrderForm extends Component{
            const fetchedHolidaysInMs = this.props.fetchedHolidaysInMs;
            const operator = "subtract";
         
-           console.log(`calculateCourtOrderDates: numDays ${calculateFrom}`);
-
            courtOrderObj.calculatedDate = 
            calculateLegalDates(
                 daySum,
@@ -71,14 +71,12 @@ export default class CourtOrderForm extends Component{
     
 
     handleSubmit = () => {
+        // Calculate the date by the selected days
         const courtOrderObj = this.calculateCourtOrderDates();
-        const selectedDay = `${this.state.selectedDate.getDate()} 
-                             ${utilMonths[this.state.selectedDate.getMonth()]} 
-                             ${this.state.selectedDate.getFullYear()}`;
-        
-        courtOrderObj.selectedDay = selectedDay;
 
-        console.log("handleSubmit: Passing object to Parent");
+        // Format date objects to string before providing to the parent for display
+        courtOrderObj.calculatedDate = convertDateToString(courtOrderObj.calculatedDate);                     
+        courtOrderObj.selectedDate = convertDateToString(courtOrderObj.selectedDate);
 
         this.props.handleSubmit(courtOrderObj);
         this.handleClose();
@@ -89,7 +87,7 @@ export default class CourtOrderForm extends Component{
                              ${utilMonths[this.state.selectedDate.getMonth()]}
                              ${this.state.selectedDate.getFullYear()}`;
         
-        let optionNums = [<option></option>];
+        let optionNums = [<option>0</option>];
         for(let i=1; i < 100; i++){
             optionNums.push(<option>{i}</option>);
             };

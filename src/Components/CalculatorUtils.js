@@ -29,6 +29,10 @@ export const utilMonths = [
   "December"
 ];
 
+const simpleMath = {
+  add: (x, y) => x + y,
+  subtract: (x, y) => x - y
+};
 export function convertDateToMs(dateVar) {
   // Takes in date arg as xxxx-xx-xx or as a date object from the calendar; then converts to MS
   if (typeof dateVar !== "string") {
@@ -37,7 +41,18 @@ export function convertDateToMs(dateVar) {
 
   dateVar = String(new Date(dateVar)).slice(0, 15);
   return new Date(dateVar).getTime();
-}
+};
+
+export function convertDateToString(msDateObject) {
+  const readableDateObj = new Date(msDateObject);
+
+  const strDateObj = `${utilDays[readableDateObj.getDay()]} 
+                        ${readableDateObj.getDate()} 
+                        ${utilMonths[readableDateObj.getMonth()]} 
+                        ${readableDateObj.getFullYear()}`;
+
+  return strDateObj;
+};
 
 function checkNonBizDays(incrementedDate) {
   // Returns index day of the week, 0-6
@@ -49,7 +64,7 @@ function checkNonBizDays(incrementedDate) {
   } else {
     return false;
   }
-}
+};
 
 function checkHolidays(incrementedDate, holidaysArrayMs) {
   for (let i = 0; i < holidaysArrayMs.length; i++) {
@@ -57,7 +72,7 @@ function checkHolidays(incrementedDate, holidaysArrayMs) {
       return true;
     }
   }
-}
+};
 
 function calculateClearDays(loopFor, calculateFrom, holidaysArrayInMs, operator) {
   console.log("CLEAR DAYS: calculating clear days");
@@ -76,7 +91,7 @@ function calculateClearDays(loopFor, calculateFrom, holidaysArrayInMs, operator)
   }
   // Returns the clear day in milliseconds
   return days;
-}
+};
 
 // Returns the calculated date in milliseconds
 export function calculateLegalDates(
@@ -92,30 +107,34 @@ export function calculateLegalDates(
   let calculatedDate;
   const loopFor = daySum / 86400000;
 
-  for (let i = 0; i < loopFor; i++) {
-    if (clearDays) {
-      calculatedDate = calculateClearDays(
-        loopFor,
-        calculateFrom,
-        holidaysArrayInMs,
-        operator
-      );
+  if(loopFor !== 0){
+    for (let i = 0; i < loopFor; i++) {
+      if (clearDays) {
+        calculatedDate = calculateClearDays(
+          loopFor,
+          calculateFrom,
+          holidaysArrayInMs,
+          operator
+        );
+      }
+      else {
+        calculatedDate = new Date(
+          Math.abs(simpleMath[operator](daySum, calculateFrom))
+        ).getTime();
+        console.log(`calculateLegalDates: calculatedDate: ${calculatedDate}`)
+      }
     }
-    else {
-      calculatedDate = new Date(
-        Math.abs(simpleMath[operator](daySum, calculateFrom))
-      ).getTime();
-      console.log(`calculateLegalDates: calculatedDate: ${calculatedDate}`)
-    }
-  }
 
-  return calculatedDate;
-}
+    return calculatedDate;
 
-const simpleMath = {
-  add: (x, y) => x + y,
-  subtract: (x, y) => x - y
+  }else{
+    calculatedDate = calculateFrom;
+    return calculatedDate;
+  };
+
 };
+
+
 
 
 
