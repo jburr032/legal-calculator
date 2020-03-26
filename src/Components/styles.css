@@ -1,0 +1,44 @@
+
+.react-calendar {
+  width: 35em;
+  color: #d10056;
+  font-size: 19px;
+  text-transform: uppercase;
+  border-color: #d10056;
+  border-width: 0.2em;
+}
+
+.extension-input {
+  text-align: center;
+  font-size: 30px;
+}
+
+.navbar-container{
+  width: 100%;
+}
+
+.model-CPR-content{
+  padding-top: 250px;
+  color: white;
+  font-size: 1.5em;
+  text-align: left;
+}
+
+.CPR-active{
+  cursor: pointer;
+
+}
+
+.delete{
+  cursor: pointer;
+}
+
+.homepage-option-style:hover{
+  cursor: pointer;
+  width: 100%;
+  
+} 
+
+.law-icon{
+  align-items: center;
+}
