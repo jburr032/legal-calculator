@@ -1,9 +1,3 @@
-/*** Utilities for calculating dates based on the input array-object 
- *   All utilities should be added to this file to be used across the type of calculators 
- * 
-*/
-
-//const millisecondsInDay = 86400000;
 
 export const utilDays = [
   "Sunday",
@@ -14,6 +8,7 @@ export const utilDays = [
   "Friday",
   "Saturday"
 ];
+
 export const utilMonths = [
   "January",
   "February",
@@ -75,9 +70,6 @@ function checkHolidays(incrementedDate, holidaysArrayMs) {
 };
 
 function calculateClearDays(loopFor, calculateFrom, holidaysArrayInMs, operator) {
-  console.log("CLEAR DAYS: calculating clear days");
-  console.log(`${calculateFrom}`);
-
   
   const millisecondsInDay = 86400000;
   let days = calculateFrom;
@@ -102,8 +94,6 @@ export function calculateLegalDates(
   operator
 ) {
   
-  console.log(`calculateLegalDates: ${daySum}`);
-
   let calculatedDate;
   const loopFor = daySum / 86400000;
 
@@ -121,7 +111,6 @@ export function calculateLegalDates(
         calculatedDate = new Date(
           Math.abs(simpleMath[operator](daySum, calculateFrom))
         ).getTime();
-        console.log(`calculateLegalDates: calculatedDate: ${calculatedDate}`)
       }
     }
 
@@ -134,7 +123,26 @@ export function calculateLegalDates(
 
 };
 
+export function validDateSelector(calculatedDate, holidaysArrayInMs){
+  if(checkNonBizDays(calculatedDate) || checkNonBizDays(calculatedDate)){
+    let listOfDates = Array(2);
+    const subtract = "subtract";
+    const add = "add";
+    const loopFor = 1;
 
+    // prevValidDate
+    listOfDates[0] = calculateClearDays(loopFor, calculatedDate, holidaysArrayInMs, subtract);
+    // Invalid date
+    listOfDates[1] = calculatedDate;
+    // nextValidDate
+    listOfDates[2] = calculateClearDays(loopFor, calculatedDate, holidaysArrayInMs, add);
+
+    return listOfDates;
+
+  }else{
+    return null;
+  }
+};
 
 
 

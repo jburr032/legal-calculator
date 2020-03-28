@@ -38,7 +38,7 @@ export default class CourtOrderForm extends Component{
         this.setState({ numDays });
 
     };
-    
+       
     calculateCourtOrderDates = () => {
 
         const courtOrderObj = {
@@ -49,7 +49,6 @@ export default class CourtOrderForm extends Component{
                clearDays      : this.state.clearDays,
                calculatedDate : null,
            }
-           console.log(courtOrderObj.objId);
            
            const daySum = courtOrderObj.numDays;
            const clearDays = courtOrderObj.clearDays;

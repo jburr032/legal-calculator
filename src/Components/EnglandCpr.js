@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
-import { calculateLegalDates, utilMonths, utilDays } from "./CalculatorUtils";
+import { calculateLegalDates, utilMonths, utilDays, convertDateToString, validDateSelector } from "./CalculatorUtils";
 import CalculatingAnimation from "./CalculatingAnimation";
 
 /*** Component that returns an array of calculated date strings */
@@ -22,17 +22,6 @@ export default class EnglandCpr extends Component {
       this.props.handleCalculatedDates(this.applyCprCalculations());
       this.props.onCalculateComplete();
     }, 1000);
-
-    convertDateToString(dateObjectToConvert) {
-      const readableDateObj = new Date(dateObjectToConvert);
-  
-      const strDateObj = `${utilDays[readableDateObj.getDay()]} 
-                            ${readableDateObj.getDate()} 
-                            ${utilMonths[readableDateObj.getMonth()]} 
-                            ${readableDateObj.getFullYear()}`;
-  
-      return strDateObj;
-    }
   
     applyCprCalculations() {
       let selectedDay = new Date(this.props.selectedDate).getTime();
@@ -49,11 +38,17 @@ export default class EnglandCpr extends Component {
           "add"
         );
 
+        
+        // Function to check whether the calculated date is a wknd or holiday - if so, then return an array with length of 3 dates in milliseconds (prevValidDate, invalidDate and nextValidDate)
+        // or null otherwise for conditional rendering
+
+        dateRulesObj.invalidDate = validDateSelector(dateRulesObj.calculatedDate, this.props.holidays);
+        
         // Since we calculate everything on a cummulative basis, we simply need to update selectedDate and not add to it
         selectedDay = dateRulesObj.calculatedDate;
 
         // Create a new date object from the calculated Date and assign the string repr of it
-        dateRulesObj.eventName = this.convertDateToString(
+        dateRulesObj.eventName = convertDateToString(
           dateRulesObj.calculatedDate
         );
   

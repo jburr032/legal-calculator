@@ -9,7 +9,6 @@ import {
   Header,
   Modal,
   Icon,
-  Transition,
   
 } from "semantic-ui-react";
 import "./styles.css";
@@ -19,32 +18,36 @@ import { convertDateToMs } from "./CalculatorUtils";
 
 const rulesEngCpr = [
   {
-    type: "Service",
-    eventName: "Served on",
-    addBy: 172800000, //2 days
-    clearDays: true,
-    calculatedDate: null
+    type            : "Service",
+    eventName       : "",
+    addBy           : 172800000, //2 days
+    clearDays       : true,
+    calculatedDate  : null,
+    invalidDate     : null,
   },
   {
-    type: "Acknowledgment",
-    eventName: "Acknowledgement of Service is due on",
-    addBy: 1209600000, //14 days
-    clearDays: false,
-    calculatedDate: null
+    type             : "Acknowledgment",
+    eventName        : "",
+    addBy            : 1209600000, //14 days
+    clearDays        : false,
+    calculatedDate   : null,
+    invalidDate      : null,
   },
   {
-    type: "Defence",
-    eventName: "Defence is due on",
-    addBy: 1209600000, //14 days
-    clearDays: false,
-    calculatedDate: null
+    type            : "Defence",
+    eventName       : "",
+    addBy           : 1209600000, //14 days
+    clearDays       : false,
+    calculatedDate  : null,
+    invalidDate     : null,
   },
   {
-    type: "Extension",
-    eventName: "Extended defence is due on",
-    addBy: 0,
-    clearDays: false,
-    calculatedDate: null
+    type            : "Extension",
+    eventName       : "",
+    addBy           : 0,
+    clearDays       : false,
+    calculatedDate  : null,
+    invalidDate     : null, 
   }
 ];
 
