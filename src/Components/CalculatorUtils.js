@@ -123,25 +123,43 @@ export function calculateLegalDates(
 
 };
 
-export function validDateSelector(calculatedDate, holidaysArrayInMs){
+export function validDateSelector(calculatedDate, holidaysArrayInMs, numDays){
   if(checkNonBizDays(calculatedDate) || checkNonBizDays(calculatedDate)){
-    let listOfDates = Array(2);
     const subtract = "subtract";
     const add = "add";
-    const loopFor = 1;
 
-    // prevValidDate
-    listOfDates[0] = calculateClearDays(loopFor, calculatedDate, holidaysArrayInMs, subtract);
-    // Invalid date
-    listOfDates[1] = calculatedDate;
-    // nextValidDate
-    listOfDates[2] = calculateClearDays(loopFor, calculatedDate, holidaysArrayInMs, add);
+    const prevValidDate = calculateClearDays(1, calculatedDate, holidaysArrayInMs, subtract);
+    const currDate = calculateClearDays(0, calculatedDate, holidaysArrayInMs, subtract);
+    const nextValidDate = calculateClearDays(1, calculatedDate, holidaysArrayInMs, add);
 
-    return listOfDates;
+    const invalidDateObjArr = [
+      {
+        dateType        :  "Previous",
+        calculatedDate  :  prevValidDate,
+        diffInDays      :  getDiffBetweenDates(prevValidDate, calculatedDate, subtract),
+      }, {
+        dateType        : "Current",
+        calculatedDate  : currDate,
+        diffInDays      : null,
+      }, {
+        dateType        : "Next",
+        calculatedDate  : nextValidDate,
+        diffInDays      : getDiffBetweenDates(nextValidDate, calculatedDate, subtract),
+      },
+    ];
+
+    return invalidDateObjArr;
 
   }else{
     return null;
   }
+};
+
+function getDiffBetweenDates(validDate, invalidDate, operator){
+  const deltaDate = Math.abs(simpleMath[operator](validDate, invalidDate));
+  console.log(`difference in days in date form ${deltaDate/86400000}`);
+
+  return deltaDate;
 };
 
 

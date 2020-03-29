@@ -14,10 +14,11 @@ import {
 import "./styles.css";
 import { convertDateToMs } from "./CalculatorUtils";
 
-
+const uuidv4 = require("uuid/v4");
 
 const rulesEngCpr = [
   {
+    objId          : uuidv4(), 
     type            : "Service",
     eventName       : "",
     addBy           : 172800000, //2 days
@@ -26,6 +27,7 @@ const rulesEngCpr = [
     invalidDate     : null,
   },
   {
+    objId          : uuidv4(), 
     type             : "Acknowledgment",
     eventName        : "",
     addBy            : 1209600000, //14 days
@@ -34,6 +36,7 @@ const rulesEngCpr = [
     invalidDate      : null,
   },
   {
+    objId          : uuidv4(), 
     type            : "Defence",
     eventName       : "",
     addBy           : 1209600000, //14 days
@@ -42,6 +45,7 @@ const rulesEngCpr = [
     invalidDate     : null,
   },
   {
+    objId          : uuidv4(), 
     type            : "Extension",
     eventName       : "",
     addBy           : 0,

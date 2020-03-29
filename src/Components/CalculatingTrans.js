@@ -1,7 +1,8 @@
 import React, { Component } from "react";
 import EnglandCpr from "./EnglandCpr";
 import PropTypes from "prop-types";
-import { Transition, Grid, Container } from "semantic-ui-react";
+import { Transition, Grid, Container, Modal, Button, Icon } from "semantic-ui-react";
+import { convertDateToString } from "./CalculatorUtils";
 
 export default class CalculatingTrans extends Component {
   static propTypes = {
@@ -13,11 +14,12 @@ export default class CalculatingTrans extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      showCalculatedDates : false,
-      showCalculating     : true,
-      dateRulesArray      : this.props.parentDateRulesArray,
-      invalidDateFound    : false,
-      invalidDatesArr     : null,
+      showCalculatedDates      : false,
+      showCalculating          : true,
+      dateRulesArray           : this.props.parentDateRulesArray,
+      invalidDateFound         : false,
+      invalidDatesArr          : null,
+      iterForInvalidDateArr    : 0,
     };
   }
 
@@ -32,7 +34,39 @@ export default class CalculatingTrans extends Component {
     const invalidDateFound = invalidDatesArr[0] ? true : false;
 
     this.setState({ dateRulesArray, invalidDateFound, invalidDatesArr });
-    console.log(this.state.invalidDatesArr);
+  };
+
+  updateDateRulesArrayObj = (event) => {
+    let dateRulesArray = this.state.dateRulesArray.map(dateRulesObj => Object.assign({}, dateRulesObj));
+    const id = event.target.id;
+    const selectedDate = event.target.value;
+    
+    dateRulesArray = dateRulesArray.map((dateRulesObj) => {
+      if(dateRulesObj.objId === id){
+        dateRulesObj.eventName = selectedDate;
+        console.log(selectedDate);
+      };
+      return dateRulesObj;
+    });
+    this.setState({ dateRulesArray });
+  };
+
+  handleModalSelection = (event) => {
+    let iter = this.state.iterForInvalidDateArr;
+    const invalidDatesArr = this.state.invalidDatesArr;
+
+    this.updateDateRulesArrayObj(event);
+  
+    if(iter < invalidDatesArr.length-1){
+      this.setState({ iterForInvalidDateArr: iter+1 });
+    }else{
+      this.setState({ invalidDateFound: false })
+    };
+
+  };
+
+  handleModalClose = () => {
+    this.setState({ invalidDateFound: false });
   };
 
   mappedDates = () => {
@@ -89,14 +123,44 @@ export default class CalculatingTrans extends Component {
 
   render() {
     if (this.state.showCalculatedDates) {
+      const iter = this.state.iterForInvalidDateArr;
+      
       return (
         <div className="ui one column centered grid">
           <div className="column">
-            {console.log(`Invalid date found: ${ new Date(this.state.invalidDatesArr[0].invalidDate[1])}`)}
-            {console.log(`Previous date found: ${ new Date(this.state.invalidDatesArr[0].invalidDate[0])}`)}
-            {console.log(`Future date found: ${ new Date(this.state.invalidDatesArr[0].invalidDate[2])}`)}
+            {this.state.invalidDateFound && 
+            <Modal
+                  open={this.state.invalidDateFound}
+                  basic
+                  size='small'
+                >
+              <Container style={{ marginTop: "150px"}}>
+                <div className="model-invalid-date">
+                    <Modal.Content>
+                    <div class="ui large header" style={{ color: "white", marginBottom: "10px" }}>
+                      <Icon name="browser" style={{ color: "white"}}/>Uh oh!...a date lands on a weekend/holiday. Please select the date you would prefer:
+                    </div>             
+                  </Modal.Content>
+                </div>
+                <Modal.Content>
+                  <Modal.Actions>
+                    <Button color='blue' id={this.state.invalidDatesArr[iter].objId} value={this.state.invalidDatesArr[iter].invalidDate[1].calculatedDate} onClick={this.handleModalSelection} inverted style={{ marginBottom:"10px" }}>
+                      <Icon name='checkmark' /> {`${new Date(this.state.invalidDatesArr[iter].invalidDate[1].calculatedDate)}`}     
+                    </Button>
 
-            {this.mappedDates()}
+                    <Button color='blue' id={this.state.invalidDatesArr[iter].objId} value={this.state.invalidDatesArr[iter].invalidDate[0].calculatedDate} onClick={this.handleModalSelection} inverted style={{ marginBottom:"10px" }}>
+                      <Icon name='checkmark' /> {`${new Date(this.state.invalidDatesArr[iter].invalidDate[0].calculatedDate)}`}     
+                    </Button>
+
+                    <Button color='blue' id={this.state.invalidDatesArr[iter].objId} value={this.state.invalidDatesArr[iter].invalidDate[2].calculatedDate} onClick={this.handleModalSelection} inverted>
+                      <Icon name='checkmark' /> {`${new Date(this.state.invalidDatesArr[iter].invalidDate[2].calculatedDate)}`}     
+                    </Button>
+                  </Modal.Actions>
+                  </Modal.Content>
+                  </Container>
+              </Modal>}
+
+            {!this.state.invalidDateFound && this.mappedDates()}
             
           </div>
         </div>

@@ -35,14 +35,14 @@ export default class EnglandCpr extends Component {
           dateRulesObj.clearDays,
           selectedDay,
           this.props.holidays,
-          "add"
+          "add",
         );
 
         
         // Function to check whether the calculated date is a wknd or holiday - if so, then return an array with length of 3 dates in milliseconds (prevValidDate, invalidDate and nextValidDate)
-        // or null otherwise for conditional rendering
-
-        dateRulesObj.invalidDate = validDateSelector(dateRulesObj.calculatedDate, this.props.holidays);
+        // or null otherwise for conditional rendering; assigns a list of objects
+        
+        dateRulesObj.invalidDate = validDateSelector(dateRulesObj.calculatedDate, this.props.holidays, dateRulesObj.addBy);
         
         // Since we calculate everything on a cummulative basis, we simply need to update selectedDate and not add to it
         selectedDay = dateRulesObj.calculatedDate;
