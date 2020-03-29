@@ -43,8 +43,8 @@ export default class CalculatingTrans extends Component {
     
     dateRulesArray = dateRulesArray.map((dateRulesObj) => {
       if(dateRulesObj.objId === id){
-        dateRulesObj.eventName = selectedDate;
-        console.log(selectedDate);
+        dateRulesObj.eventName = convertDateToString(Number(selectedDate));
+        console.log(Number(selectedDate));
       };
       return dateRulesObj;
     });
