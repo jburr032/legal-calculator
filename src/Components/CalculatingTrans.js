@@ -3,6 +3,7 @@ import EnglandCpr from "./EnglandCpr";
 import PropTypes from "prop-types";
 import { Transition, Grid, Container, Modal, Button, Icon, Label } from "semantic-ui-react";
 import { convertDateToString } from "./CalculatorUtils";
+import InvalidDateModal from "./InvalidDateModal";
 
 export default class CalculatingTrans extends Component {
   static propTypes = {
@@ -36,37 +37,25 @@ export default class CalculatingTrans extends Component {
     this.setState({ dateRulesArray, invalidDateFound, invalidDatesArr });
   };
 
-  updateDateRulesArrayObj = (event) => {
+  updateDateRulesArrayObj = (id, selectedDate) => {
     let dateRulesArray = this.state.dateRulesArray.map(dateRulesObj => Object.assign({}, dateRulesObj));
-    const id = event.target.id;
-    const selectedDate = event.target.value;
     
     dateRulesArray = dateRulesArray.map((dateRulesObj) => {
       if(dateRulesObj.objId === id){
         dateRulesObj.eventName = convertDateToString(Number(selectedDate));
-        console.log(Number(selectedDate));
       };
       return dateRulesObj;
     });
+
     this.setState({ dateRulesArray });
   };
 
-  handleModalSelection = (event) => {
-    let iter = this.state.iterForInvalidDateArr;
-    const invalidDatesArr = this.state.invalidDatesArr;
-
-    this.updateDateRulesArrayObj(event);
-  
-    if(iter < invalidDatesArr.length-1){
-      this.setState({ iterForInvalidDateArr: iter+1 });
-    }else{
-      this.setState({ invalidDateFound: false })
-    };
-
+  handleModalSelection = (id, value) => {
+    this.updateDateRulesArrayObj(id, value);
   };
 
-  handleModalClose = () => {
-    this.setState({ invalidDateFound: false });
+  handleModalClose = (status) => {
+    this.setState({ invalidDateFound: status });
   };
 
   mappedDates = () => {
@@ -122,62 +111,17 @@ export default class CalculatingTrans extends Component {
   };
 
   render() {
-    if (this.state.showCalculatedDates) {
-      const iter = this.state.iterForInvalidDateArr;
-      
+    if (this.state.showCalculatedDates) {      
       return (
         <div className="ui one column centered grid">
           <div className="column">
             {this.state.invalidDateFound && 
-            <Modal
-                  open={this.state.invalidDateFound}
-                  basic
-                  size='small'
-                >
-              <Container style={{ marginTop: "250px"}}>
-                <div className="model-invalid-date">
-                    <Modal.Content>
-                    <div class="ui large header" style={{ color: "white", marginBottom: "10px" }}>
-                     <Icon name="calendar times outline" style={{ color: "white"}}/>Uh oh!...{this.state.invalidDatesArr[iter].type} lands on a weekend or holiday. Please select the date you would prefer:
-                    </div>             
-                  </Modal.Content>
-                </div>
-                <Modal.Content>
-                  <Modal.Actions>
-                      <Button active={true} 
-                       color='blue' 
-                       id={this.state.invalidDatesArr[iter].objId} value={this.state.invalidDatesArr[iter].invalidDate[1].calculatedDate} 
-                       onClick={this.handleModalSelection}
-                       style={{ width: "30%", marginBottom:"10px" }}
-                       >
-                        {convertDateToString(this.state.invalidDatesArr[iter].invalidDate[1].calculatedDate)}
-                      </Button>    
-
-                      <Button active={true} 
-                       color='blue' 
-                       id={this.state.invalidDatesArr[iter].objId} value={this.state.invalidDatesArr[iter].invalidDate[0].calculatedDate} 
-                       onClick={this.handleModalSelection}
-                       style={{ width: "30%", marginBottom:"10px" }}
-                       >
-                        {convertDateToString(this.state.invalidDatesArr[iter].invalidDate[0].calculatedDate)}
-                      </Button>   
-
-                      <Button active={true} 
-                       color='blue' 
-                       id={this.state.invalidDatesArr[iter].objId} value={this.state.invalidDatesArr[iter].invalidDate[2].calculatedDate} 
-                       onClick={this.handleModalSelection}
-                       style={{ width: "30%", marginBottom:"10px" }}
-                       >
-                        {convertDateToString(this.state.invalidDatesArr[iter].invalidDate[2].calculatedDate)}
-                      </Button>    
-
-                    </Modal.Actions>
-                    </Modal.Content>
-                  </Container>
-              </Modal>}
-
+            <InvalidDateModal 
+              invalidDatesArr={this.state.invalidDatesArr}
+              handleModalSelection={this.handleModalSelection} 
+              handleModalClose={this.handleModalClose}
+             />}
             {!this.state.invalidDateFound && this.mappedDates()}
-            
           </div>
         </div>
       );
@@ -198,7 +142,3 @@ export default class CalculatingTrans extends Component {
     }
   }
 }
-
-function InvalidDateModal(props){
-  
-};

@@ -90,8 +90,9 @@ cprModalContent = (<><div class="ui large header" style={{ color: "white" }}>
   
 /** Component Methods */
   // API call to get holidays 
-  static componentDidMount() {
+  componentDidMount() {
     this.props.updateModalContent(this.cprModalContent);
+    console.log(this.cprModalContent);
     
   }
   
