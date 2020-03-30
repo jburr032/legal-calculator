@@ -7,11 +7,13 @@ export default class CourtOrderForm extends Component{
     constructor(props){
         super(props);
         this.state = {
-            modalOpen: this.props.modalOpen, 
-            selectedDate: this.props.date,
-            eventName: " ",
-            numDays: " ",
-            clearDays: false,
+            modalOpen           : this.props.modalOpen, 
+            selectedDate        : this.props.date,
+            eventName           : " ",
+            numDays             : " ",
+            clearDays           : false,
+            invalidDateFound    : false,
+            invalidDatesArr     : null,
         }
     }  
     

@@ -2,15 +2,20 @@ import React, { Component } from "react";
 import { Icon, Modal, Header, Grid, Container, Portal  } from "semantic-ui-react";
 import Calendar from "react-calendar";
 import CourtOrderForm from "./CourtOrderForm";
+import InvalidDateModal from "./InvalidDateModal";
+import { convertDateToString } from "./CalculatorUtils";
 import "./styles.css";
 
 export default class CourtOrdersApp extends Component{
     state = {
-        date              : new Date(),
-        courtOrderObjArr  : [],    
-        modalOpen         : false,
-        calendarDisabled  : false,
+        date                : new Date(),
+        courtOrderObjArr    : [],    
+        modalOpen           : false,
+        calendarDisabled    : false,
         fetchedHolidaysInMs : this.props.fetchedHolidaysInMs,
+        invalidDate         : false, 
+        invalidDatesArr     : null,
+
     };
 
     courtOrderModalContent = <>
@@ -46,14 +51,38 @@ export default class CourtOrdersApp extends Component{
 
     handleModalClose = () => this.setState({ modalOpen: false, calendarDisabled: false });
 
-    onSubmit = (courtOrderObj) => { 
-         // Create a copy of each object and array from state
-         const courtOrderObjArr = this.state.courtOrderObjArr.map(obj => Object.assign({}, obj));
-         
-         courtOrderObjArr.push(courtOrderObj);
-         
-         this.setState({ courtOrderObjArr });
+    updateDateRulesArrayObj = (id, selectedDate) => {
+        let invalidDatesArr = this.state.invalidDatesArr.map(dateRulesObj => Object.assign({}, dateRulesObj));
         
+        invalidDatesArr = invalidDatesArr.map((dateRulesObj) => {
+          if(dateRulesObj.objId === id){
+            dateRulesObj.eventName = convertDateToString(Number(selectedDate));
+          };
+          return dateRulesObj;
+        });
+    
+        this.setState({ courtOrderObjArr: invalidDatesArr, invalidDatesArr: [] });
+      };
+    
+    handleInvalidDateClose = (status) => {
+        this.setState({ invalidDate: status });
+      };
+
+    handleModalSelection = (id, value) => {
+        this.updateDateRulesArrayObj(id, value);
+      };
+
+    onSubmit = (courtOrderObj) => { 
+         if(courtOrderObj.invalidDate !== null){
+            this.setState({ invalidDate: true, invalidDatesArr: courtOrderObj });
+
+         }
+         else{
+            // Create a copy of each object and array from state
+            const courtOrderObjArr = this.state.courtOrderObjArr.map(obj => Object.assign({}, obj));
+            courtOrderObjArr.push(courtOrderObj);
+            this.setState({ courtOrderObjArr });
+         }
     };
 
     onDeleteClick = (event) => {
@@ -67,13 +96,22 @@ export default class CourtOrdersApp extends Component{
     
     render(){
         
-        const open = this.state.modalOpen;
+        const { modalOpen, invalidDate, invalidDatesArr, handleInvalidDateClose, handleModalSelection } = this.state;
         const dashboardContainerStyle = {width: "950px", padding: "3.5%"};
         
-         const showUserInputs = this.state.courtOrderObjArr.map((courtOrderObj) => <LegalEventItem courtOrderObj={courtOrderObj} deleteClick={this.onDeleteClick} />);             
+        const showUserInputs = this.state.courtOrderObjArr.map((courtOrderObj) => <LegalEventItem courtOrderObj={courtOrderObj} deleteClick={this.onDeleteClick} />);             
             
         return(
-            <Container style={dashboardContainerStyle}>
+            <>
+            {invalidDate && 
+            <InvalidDateModal 
+              invalidDatesArr={invalidDatesArr}
+              handleModalSelection={handleModalSelection} 
+              handleModalClose={handleInvalidDateClose}
+            />}
+
+            {!invalidDate && 
+                <Container style={dashboardContainerStyle}>
                 <Grid stackable centered columns={2} divided>
                     <Header style={this.calendarHeaderStyle} size="large">
                             Court Order
@@ -86,10 +124,10 @@ export default class CourtOrdersApp extends Component{
                           onClickDay={this.handleDayClick}
                           tileDisabled={() => this.state.calendarDisabled}
                         /> 
-                        <Portal onClose={this.handleClose} open={open}>
+                        <Portal onClose={this.handleClose} open={modalOpen}>
                             {<CourtOrderForm
                                 date={this.state.date}
-                                onModalOpen={open}
+                                onModalOpen={modalOpen}
                                 onModalClose={this.handleModalClose}
                                 calendarDisabled={this.state.calendarDisabled}
                                 handleSubmit={this.onSubmit}
@@ -103,10 +141,11 @@ export default class CourtOrdersApp extends Component{
                     </Grid.Column>
                 </Grid.Row>
              </Grid>
-            </Container>
+            </Container>}
+          </>  
         )
-    }
-}
+    };
+};
 
 function LegalEventItem(props){
     const { courtOrderObj, deleteClick }= props;
@@ -116,9 +155,9 @@ function LegalEventItem(props){
               <div className="event" >                                    
                  <div className="content" style={{ width: "100%" }}>      
                         <div className="summary"> 
-                            <i aria-hidden="true" class="law icon"></i>                        
+                            <i class="law icon"></i>                        
                                  {courtOrderObj.eventName}
-                            <i aria-hidden="true" className="remove-event delete icon " id={courtOrderObj.objId} onClick={deleteClick} style={{ float: "right", }}></i>
+                            <i className="remove-event delete icon " id={courtOrderObj.objId} onClick={deleteClick} style={{ float: "right", }}></i>
                         </div>
                         <div className="summary">Due on {courtOrderObj.calculatedDate}</div>
                             <div className="text extra">
