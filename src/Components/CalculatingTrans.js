@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import EnglandCpr from "./EnglandCpr";
 import PropTypes from "prop-types";
-import { Transition, Grid, Container, Modal, Button, Icon } from "semantic-ui-react";
+import { Transition, Grid, Container, Modal, Button, Icon, Label } from "semantic-ui-react";
 import { convertDateToString } from "./CalculatorUtils";
 
 export default class CalculatingTrans extends Component {
@@ -134,29 +134,45 @@ export default class CalculatingTrans extends Component {
                   basic
                   size='small'
                 >
-              <Container style={{ marginTop: "150px"}}>
+              <Container style={{ marginTop: "250px"}}>
                 <div className="model-invalid-date">
                     <Modal.Content>
                     <div class="ui large header" style={{ color: "white", marginBottom: "10px" }}>
-                      <Icon name="browser" style={{ color: "white"}}/>Uh oh!...a date lands on a weekend/holiday. Please select the date you would prefer:
+                     <Icon name="calendar times outline" style={{ color: "white"}}/>Uh oh!...{this.state.invalidDatesArr[iter].type} lands on a weekend or holiday. Please select the date you would prefer:
                     </div>             
                   </Modal.Content>
                 </div>
                 <Modal.Content>
                   <Modal.Actions>
-                    <Button color='blue' id={this.state.invalidDatesArr[iter].objId} value={this.state.invalidDatesArr[iter].invalidDate[1].calculatedDate} onClick={this.handleModalSelection} inverted style={{ marginBottom:"10px" }}>
-                      <Icon name='checkmark' /> {`${new Date(this.state.invalidDatesArr[iter].invalidDate[1].calculatedDate)}`}     
-                    </Button>
+                      <Button active={true} 
+                       color='blue' 
+                       id={this.state.invalidDatesArr[iter].objId} value={this.state.invalidDatesArr[iter].invalidDate[1].calculatedDate} 
+                       onClick={this.handleModalSelection}
+                       style={{ width: "30%", marginBottom:"10px" }}
+                       >
+                        {convertDateToString(this.state.invalidDatesArr[iter].invalidDate[1].calculatedDate)}
+                      </Button>    
 
-                    <Button color='blue' id={this.state.invalidDatesArr[iter].objId} value={this.state.invalidDatesArr[iter].invalidDate[0].calculatedDate} onClick={this.handleModalSelection} inverted style={{ marginBottom:"10px" }}>
-                      <Icon name='checkmark' /> {`${new Date(this.state.invalidDatesArr[iter].invalidDate[0].calculatedDate)}`}     
-                    </Button>
+                      <Button active={true} 
+                       color='blue' 
+                       id={this.state.invalidDatesArr[iter].objId} value={this.state.invalidDatesArr[iter].invalidDate[0].calculatedDate} 
+                       onClick={this.handleModalSelection}
+                       style={{ width: "30%", marginBottom:"10px" }}
+                       >
+                        {convertDateToString(this.state.invalidDatesArr[iter].invalidDate[0].calculatedDate)}
+                      </Button>   
 
-                    <Button color='blue' id={this.state.invalidDatesArr[iter].objId} value={this.state.invalidDatesArr[iter].invalidDate[2].calculatedDate} onClick={this.handleModalSelection} inverted>
-                      <Icon name='checkmark' /> {`${new Date(this.state.invalidDatesArr[iter].invalidDate[2].calculatedDate)}`}     
-                    </Button>
-                  </Modal.Actions>
-                  </Modal.Content>
+                      <Button active={true} 
+                       color='blue' 
+                       id={this.state.invalidDatesArr[iter].objId} value={this.state.invalidDatesArr[iter].invalidDate[2].calculatedDate} 
+                       onClick={this.handleModalSelection}
+                       style={{ width: "30%", marginBottom:"10px" }}
+                       >
+                        {convertDateToString(this.state.invalidDatesArr[iter].invalidDate[2].calculatedDate)}
+                      </Button>    
+
+                    </Modal.Actions>
+                    </Modal.Content>
                   </Container>
               </Modal>}
 
@@ -182,3 +198,7 @@ export default class CalculatingTrans extends Component {
     }
   }
 }
+
+function InvalidDateModal(props){
+  
+};

@@ -52,7 +52,7 @@ const rulesEngCpr = [
     clearDays       : false,
     calculatedDate  : null,
     invalidDate     : null, 
-  }
+  }, 
 ];
 
 export default class CprDashboard extends Component {
@@ -69,8 +69,6 @@ export default class CprDashboard extends Component {
   
 
 /*** Component variables */
-
-modelTitle = "Calculate CPR Dates";
 
 cprModalContent = (<><div class="ui large header" style={{ color: "white" }}>
                       <Icon name="browser" style={{ color: "white" }}/>Civil Procedure Rules Calculator

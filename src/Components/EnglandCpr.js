@@ -28,6 +28,7 @@ export default class EnglandCpr extends Component {
       let dateRulesArr = this.props.dateRulesArray.map(obj =>
         Object.assign({}, obj)
       );
+
       // Loop over each rules object in the array
       dateRulesArr = dateRulesArr.map(dateRulesObj => {
         dateRulesObj.calculatedDate = calculateLegalDates(
@@ -37,11 +38,9 @@ export default class EnglandCpr extends Component {
           this.props.holidays,
           "add",
         );
-
         
         // Function to check whether the calculated date is a wknd or holiday - if so, then return an array with length of 3 dates in milliseconds (prevValidDate, invalidDate and nextValidDate)
-        // or null otherwise for conditional rendering; assigns a list of objects
-        
+        // or null otherwise for conditional rendering; assigns a list of objects  
         dateRulesObj.invalidDate = validDateSelector(dateRulesObj.calculatedDate, this.props.holidays, dateRulesObj.addBy);
         
         // Since we calculate everything on a cummulative basis, we simply need to update selectedDate and not add to it

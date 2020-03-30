@@ -70,17 +70,18 @@ function checkHolidays(incrementedDate, holidaysArrayMs) {
 };
 
 function calculateClearDays(loopFor, calculateFrom, holidaysArrayInMs, operator) {
-  
   const millisecondsInDay = 86400000;
   let days = calculateFrom;
+
   // Loop as many times as needed to add a biz day
   for (let x = 0; x < loopFor; x++) {
     days = simpleMath[operator](days, millisecondsInDay);
     // Add another day if the calculated date is NOT a biz day or IS a holiday
     while (checkNonBizDays(days) || checkHolidays(days, holidaysArrayInMs)) {
       days = simpleMath[operator](days, millisecondsInDay);
-    }
-  }
+    };
+  };
+
   // Returns the clear day in milliseconds
   return days;
 };
@@ -97,6 +98,7 @@ export function calculateLegalDates(
   let calculatedDate;
   const loopFor = daySum / 86400000;
 
+  // If condition added to accommodate Court Order dates with 0 days selected
   if(loopFor !== 0){
     for (let i = 0; i < loopFor; i++) {
       if (clearDays) {
@@ -108,9 +110,10 @@ export function calculateLegalDates(
         );
       }
       else {
-        calculatedDate = new Date(
+        /*calculatedDate = new Date(
           Math.abs(simpleMath[operator](daySum, calculateFrom))
-        ).getTime();
+        ).getTime();*/
+        calculatedDate = 1590188400000;
       }
     }
 
@@ -123,7 +126,7 @@ export function calculateLegalDates(
 
 };
 
-export function validDateSelector(calculatedDate, holidaysArrayInMs, numDays){
+export function validDateSelector(calculatedDate, holidaysArrayInMs){
   if(checkNonBizDays(calculatedDate) || checkNonBizDays(calculatedDate)){
     const subtract = "subtract";
     const add = "add";
@@ -157,9 +160,7 @@ export function validDateSelector(calculatedDate, holidaysArrayInMs, numDays){
 
 function getDiffBetweenDates(validDate, invalidDate, operator){
   const deltaDate = Math.abs(simpleMath[operator](validDate, invalidDate));
-  console.log(`difference in days in date form ${deltaDate/86400000}`);
-
-  return deltaDate;
+  return deltaDate/86400000;
 };
 
 
