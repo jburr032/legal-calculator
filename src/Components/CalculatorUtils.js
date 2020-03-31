@@ -110,10 +110,9 @@ export function calculateLegalDates(
         );
       }
       else {
-        /*calculatedDate = new Date(
+        calculatedDate = new Date(
           Math.abs(simpleMath[operator](daySum, calculateFrom))
-        ).getTime();*/
-        calculatedDate = 1590188400000;
+        ).getTime();
       }
     }
 
@@ -126,8 +125,8 @@ export function calculateLegalDates(
 
 };
 
-export function validDateSelector(calculatedDate, holidaysArrayInMs){
-  if(checkNonBizDays(calculatedDate) || checkNonBizDays(calculatedDate)){
+export function validDateSelector(calculatedDate, holidaysArrayInMs, daySum){
+  if(checkNonBizDays(calculatedDate) || checkHolidays(calculatedDate, holidaysArrayInMs)){
     const subtract = "subtract";
     const add = "add";
 
@@ -139,15 +138,16 @@ export function validDateSelector(calculatedDate, holidaysArrayInMs){
       {
         dateType        :  "Previous",
         calculatedDate  :  prevValidDate,
-        diffInDays      :  getDiffBetweenDates(prevValidDate, calculatedDate, subtract),
+        diffInDays      :  Math.floor(Math.abs(simpleMath[add](daySum, getDiffBetweenDates(prevValidDate, calculatedDate, subtract))/86400000)),
       }, {
         dateType        : "Current",
         calculatedDate  : currDate,
-        diffInDays      : null,
+        diffInDays      : 0,
+        holiday         : (currDate in holidaysArrayInMs),
       }, {
         dateType        : "Next",
         calculatedDate  : nextValidDate,
-        diffInDays      : getDiffBetweenDates(nextValidDate, calculatedDate, subtract),
+        diffInDays      : Math.ceil(Math.abs(simpleMath[subtract](daySum, getDiffBetweenDates(nextValidDate, calculatedDate, subtract))/86400000)),
       },
     ];
 
@@ -160,7 +160,8 @@ export function validDateSelector(calculatedDate, holidaysArrayInMs){
 
 function getDiffBetweenDates(validDate, invalidDate, operator){
   const deltaDate = Math.abs(simpleMath[operator](validDate, invalidDate));
-  return deltaDate/86400000;
+  return deltaDate;
+
 };
 
 

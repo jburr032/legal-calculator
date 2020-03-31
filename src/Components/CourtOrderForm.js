@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { Header, Segment } from "semantic-ui-react";
-import { calculateLegalDates, utilMonths, convertDateToString } from "./CalculatorUtils";
+import { calculateLegalDates, utilMonths, convertDateToString, validDateSelector } from "./CalculatorUtils";
 
 const uuidv4 = require("uuid/v4");
 export default class CourtOrderForm extends Component{
@@ -38,20 +38,18 @@ export default class CourtOrderForm extends Component{
         let numDays = Number(event.target.value);
         numDays = numDays === 0 ? 0 : numDays*86400000;
         this.setState({ numDays });
-
     };
-       
+           
     calculateCourtOrderDates = () => {
-
         const courtOrderObj = {
-                type           : "Court Order",
-                objId          : uuidv4(), 
+                type          : "Court Order",
+                objId         : uuidv4(), 
                eventName      : this.state.eventName,
                selectedDate   : this.state.selectedDate,
                numDays        : Number(this.state.numDays),
                clearDays      : this.state.clearDays,
                calculatedDate : null,
-               invalidDate    : null, 
+               invalidDate    : null,
            }
            
            const daySum = courtOrderObj.numDays;
@@ -68,12 +66,12 @@ export default class CourtOrderForm extends Component{
                 fetchedHolidaysInMs,
                 operator
            );
- 
+
+           courtOrderObj.invalidDate = validDateSelector(courtOrderObj.calculatedDate, fetchedHolidaysInMs, daySum);
+
         return courtOrderObj;
      };
      
-    
-
     handleSubmit = () => {
         // Calculate the date by the selected days
         const courtOrderObj = this.calculateCourtOrderDates();
@@ -84,7 +82,7 @@ export default class CourtOrderForm extends Component{
 
         this.props.handleSubmit(courtOrderObj);
         this.handleClose();
-    }
+    };
 
     render(){
         const clickedDate = `${this.state.selectedDate.getDate()} 

@@ -6,20 +6,27 @@ import { convertDateToString } from "./CalculatorUtils";
 export default function InvalidDateModal(props){
     const [ iterator, increaseIterator   ] = useState(0);
     const datesArr = props.invalidDatesArr;
-
+     
     const onModalSelection = (event) => {
         const id = event.target.id;
-        const value = event.target.value;
+        const _ = event.target.value.split(",")
 
-        props.handleModalSelection(id, value);
+        console.log(`Value is ${_[0]}, Delta is ${_[1]}`);
+
+        for(let i=0; i < datesArr.length; i++){
+            if(datesArr[i].objId === id){
+                for(let x=0; x < datesArr[i].invalidDate.length; x++){
+                    const deltaDays = datesArr[i].invalidDate[x].diffInDays;
+                };
+            };
+        };
+
+        props.handleModalSelection(id, _[0]);
       
         if(iterator < datesArr.length-1){
           increaseIterator(iterator + 1);
         }else{
-          props.handleModalClose(false);
-
-        };
-    
+          props.handleModalClose(false);};
       };
 
     return(
@@ -40,7 +47,7 @@ export default function InvalidDateModal(props){
             <Modal.Actions>
                 <Button active={true} 
                  color='blue' 
-                 id={datesArr[iterator].objId} value={datesArr[iterator].invalidDate[0].calculatedDate} 
+                 id={datesArr[iterator].objId} value={[datesArr[iterator].invalidDate[0].calculatedDate, datesArr[iterator].invalidDate[0].diffInDays]} 
                  onClick={onModalSelection}
                  style={{ width: "30%", marginBottom:"10px" }}
                 >
@@ -49,16 +56,17 @@ export default function InvalidDateModal(props){
 
                 <Button active={true} 
                  color='blue' 
-                 id={datesArr[iterator].objId} value={datesArr[iterator].invalidDate[1].calculatedDate} 
+                 id={datesArr[iterator].objId} value={[datesArr[iterator].invalidDate[1].calculatedDate, datesArr[iterator].invalidDate[1].diffInDays]} 
                  onClick={onModalSelection}
                  style={{ width: "30%", marginBottom:"10px" }}
                 >
                     {convertDateToString(datesArr[iterator].invalidDate[1].calculatedDate)}
+                    {String(datesArr[iterator].invalidDate[1].holiday)}
                 </Button>   
 
                 <Button active={true} 
                  color='blue' 
-                 id={datesArr[iterator].objId} value={datesArr[iterator].invalidDate[2].calculatedDate} 
+                 id={datesArr[iterator].objId} value={[datesArr[iterator].invalidDate[2].calculatedDate, datesArr[iterator].invalidDate[2].diffInDays]} 
                  onClick={onModalSelection}
                  style={{ width: "30%", marginBottom:"10px" }}
                 >

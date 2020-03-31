@@ -20,7 +20,6 @@ export default class CalculatingTrans extends Component {
       dateRulesArray           : this.props.parentDateRulesArray,
       invalidDateFound         : false,
       invalidDatesArr          : null,
-      iterForInvalidDateArr    : 0,
     };
   }
 

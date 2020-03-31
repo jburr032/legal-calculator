@@ -1,21 +1,20 @@
 import React, { Component } from "react";
 import { Icon, Modal, Header, Grid, Container, Portal  } from "semantic-ui-react";
 import Calendar from "react-calendar";
-import CourtOrderForm from "./CourtOrderForm";
 import InvalidDateModal from "./InvalidDateModal";
+import CourtOrderForm from "./CourtOrderForm";
 import { convertDateToString } from "./CalculatorUtils";
 import "./styles.css";
 
 export default class CourtOrdersApp extends Component{
-    state = {
+    state = { 
         date                : new Date(),
         courtOrderObjArr    : [],    
         modalOpen           : false,
         calendarDisabled    : false,
         fetchedHolidaysInMs : this.props.fetchedHolidaysInMs,
-        invalidDate         : false, 
-        invalidDatesArr     : null,
-
+        invalidDatesArr      : [],
+        invalidDateFound    : false,
     };
 
     courtOrderModalContent = <>
@@ -50,40 +49,49 @@ export default class CourtOrdersApp extends Component{
     handleDayClick = date => this.setState({ modalOpen: true, calendarDisabled: true, date });
 
     handleModalClose = () => this.setState({ modalOpen: false, calendarDisabled: false });
-
-    updateDateRulesArrayObj = (id, selectedDate) => {
-        let invalidDatesArr = this.state.invalidDatesArr.map(dateRulesObj => Object.assign({}, dateRulesObj));
-        
-        invalidDatesArr = invalidDatesArr.map((dateRulesObj) => {
-          if(dateRulesObj.objId === id){
-            dateRulesObj.eventName = convertDateToString(Number(selectedDate));
-          };
-          return dateRulesObj;
-        });
     
-        this.setState({ courtOrderObjArr: invalidDatesArr, invalidDatesArr: [] });
-      };
-    
-    handleInvalidDateClose = (status) => {
-        this.setState({ invalidDate: status });
-      };
-
-    handleModalSelection = (id, value) => {
-        this.updateDateRulesArrayObj(id, value);
-      };
-
-    onSubmit = (courtOrderObj) => { 
-         if(courtOrderObj.invalidDate !== null){
-            this.setState({ invalidDate: true, invalidDatesArr: courtOrderObj });
-
-         }
-         else{
-            // Create a copy of each object and array from state
+    onSubmit = (courtOrderObj) => {  
+        let invalidDatesArr = [];
+        // Create a copy of each object and array from state
+        if(courtOrderObj.invalidDate !== null){
+            invalidDatesArr.push(courtOrderObj);
+            this.setState({ invalidDatesArr, invalidDateFound: true });
+            for(let i=0; i < invalidDatesArr.length; i++){
+               for(let x=0; x < invalidDatesArr[i].invalidDate.length; x++){
+                    console.log(`courtOrderObj.invalidDate: ${invalidDatesArr[i].invalidDate[x].calculatedDate}`);
+               };
+            };  
+        }
+        else{
             const courtOrderObjArr = this.state.courtOrderObjArr.map(obj => Object.assign({}, obj));
             courtOrderObjArr.push(courtOrderObj);
             this.setState({ courtOrderObjArr });
-         }
+        }
+       
     };
+
+    /* Invalid Date Modal methods */
+    handleInvalidDateSelection = (id, selectedDate) => {
+        // Create copy of the current state of courtOrderArr of objects
+        let courtOrderObjArr = this.state.courtOrderObjArr.map((courtOrderObj) => Object.assign({}, courtOrderObj));
+        let invalidDatesArr = this.state.invalidDatesArr.map((courtOrderObj) => Object.assign({}, courtOrderObj));
+
+        invalidDatesArr = invalidDatesArr.map((courtOrderObj) => {
+            if(courtOrderObj.objId === id){
+                console.log(`ID from clicked courtOrderObj in CourtOrders: ${id} ${courtOrderObj.objId}`)
+                courtOrderObj.calculatedDate = convertDateToString(Number(selectedDate));
+            }
+             courtOrderObjArr.push(courtOrderObj);
+        });
+
+        this.setState({ courtOrderObjArr });
+    };
+
+    handleInvalidDateModalClose = (status) => {
+        this.setState({ invalidDateFound: status });
+    }; 
+
+    /* end */
 
     onDeleteClick = (event) => {
         const clickedLegalEvent = event.target.id;
@@ -96,53 +104,51 @@ export default class CourtOrdersApp extends Component{
     
     render(){
         
-        const { modalOpen, invalidDate, invalidDatesArr, handleInvalidDateClose, handleModalSelection } = this.state;
+        const { modalOpen, invalidDateFound, invalidDatesArr } = this.state;
         const dashboardContainerStyle = {width: "950px", padding: "3.5%"};
         
         const showUserInputs = this.state.courtOrderObjArr.map((courtOrderObj) => <LegalEventItem courtOrderObj={courtOrderObj} deleteClick={this.onDeleteClick} />);             
             
         return(
-            <>
-            {invalidDate && 
-            <InvalidDateModal 
-              invalidDatesArr={invalidDatesArr}
-              handleModalSelection={handleModalSelection} 
-              handleModalClose={handleInvalidDateClose}
-            />}
-
-            {!invalidDate && 
+            <>{invalidDateFound ?
+                <InvalidDateModal 
+                    invalidDatesArr={invalidDatesArr}
+                    handleModalSelection={this.handleInvalidDateSelection} 
+                    handleModalClose={this.handleInvalidDateModalClose}
+                /> :
+            
                 <Container style={dashboardContainerStyle}>
-                <Grid stackable centered columns={2} divided>
-                    <Header style={this.calendarHeaderStyle} size="large">
-                            Court Order
-                    </Header>
-                <Grid.Row>
-                    
-                    <Grid.Column width={10}>
-                        <Calendar 
-                          value={this.state.date}
-                          onClickDay={this.handleDayClick}
-                          tileDisabled={() => this.state.calendarDisabled}
-                        /> 
-                        <Portal onClose={this.handleClose} open={modalOpen}>
-                            {<CourtOrderForm
-                                date={this.state.date}
-                                onModalOpen={modalOpen}
-                                onModalClose={this.handleModalClose}
-                                calendarDisabled={this.state.calendarDisabled}
-                                handleSubmit={this.onSubmit}
-                                fetchedHolidaysInMs={this.props.fetchedHolidaysInMs}
-                            />}
-                        </Portal>
-                    </Grid.Column>
+                    <Grid stackable centered columns={2} divided>
+                        <Header style={this.calendarHeaderStyle} size="large">
+                                Court Order
+                        </Header>
+                    <Grid.Row>
+                        
+                        <Grid.Column width={10}>
+                            <Calendar 
+                            value={this.state.date}
+                            onClickDay={this.handleDayClick}
+                            tileDisabled={() => this.state.calendarDisabled}
+                            /> 
+                            <Portal onClose={this.handleClose} open={modalOpen}>
+                                <CourtOrderForm
+                                    date={this.state.date}
+                                    onModalOpen={modalOpen}
+                                    onModalClose={this.handleModalClose}
+                                    calendarDisabled={this.state.calendarDisabled}
+                                    handleSubmit={this.onSubmit}
+                                    fetchedHolidaysInMs={this.props.fetchedHolidaysInMs}
+                                />
+                            </Portal>
+                        </Grid.Column>
 
-                    <Grid.Column width={6}>
-                            {showUserInputs}
-                    </Grid.Column>
-                </Grid.Row>
-             </Grid>
+                        <Grid.Column width={6}>
+                                {showUserInputs}
+                        </Grid.Column>
+                    </Grid.Row>
+                </Grid>
             </Container>}
-          </>  
+         </>       
         )
     };
 };
