@@ -116,7 +116,6 @@ export function calculateLegalDates(
         // Then strip the timestamp from the date object to normalise the date object with the holidayMS by using convertDateToString()
         // Get the stripped date object in milliseconds
         calculatedDate = new Date(convertDateToString(calculatedDate)).getTime();
-      
       }
     };
 
@@ -126,7 +125,6 @@ export function calculateLegalDates(
     calculatedDate = calculateFrom;
     return calculatedDate;
   }
-
 };
 
 export function validDateSelector(calculatedDate, holidaysArrayInMs, daySum){

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Modal, Button, Icon } from "semantic-ui-react";
+import { Modal, Button, Icon, Label } from "semantic-ui-react";
  
 class InstructionModal extends Component{
     state = { modalOpen: false }
@@ -10,7 +10,7 @@ class InstructionModal extends Component{
 
     instructionBtn = (<div className="right menu">
                         <div className="item">
-                            <Icon link name='help' onClick={this.handleOpen}/>
+                            <Button style={{ backgroundColor: "#d10056",  color: "white", fontSize: "12px" }} onClick={this.handleOpen}>Help</Button>
                         </div>
                     </div>);
 

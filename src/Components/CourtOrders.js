@@ -71,15 +71,18 @@ export default class CourtOrdersApp extends Component{
     };
 
     /* Invalid Date Modal methods */
-    handleInvalidDateSelection = (id, selectedDate) => {
+    handleInvalidDateSelection = (id, selectedDate, delta) => {
         // Create copy of the current state of courtOrderArr of objects
         let courtOrderObjArr = this.state.courtOrderObjArr.map((courtOrderObj) => Object.assign({}, courtOrderObj));
         let invalidDatesArr = this.state.invalidDatesArr.map((courtOrderObj) => Object.assign({}, courtOrderObj));
 
         invalidDatesArr = invalidDatesArr.map((courtOrderObj) => {
             if(courtOrderObj.objId === id){
-                console.log(`ID from clicked courtOrderObj in CourtOrders: ${id} ${courtOrderObj.objId}`)
                 courtOrderObj.calculatedDate = convertDateToString(Number(selectedDate));
+                console.log(`numDays: ${delta} and its typeOf: ${typeof(delta)}`);
+
+                courtOrderObj.numDays = delta;
+                console.log(`numDays: ${courtOrderObj.numDays} and its typeOf: ${typeof(courtOrderObj.numDays)}`);
             }
              courtOrderObjArr.push(courtOrderObj);
         });
@@ -155,6 +158,8 @@ export default class CourtOrdersApp extends Component{
 
 function LegalEventItem(props){
     const { courtOrderObj, deleteClick }= props;
+    const selectedDateToCompare = new Date(courtOrderObj.selectedDate).getTime();
+    const calculatedDateToCompare = new Date(courtOrderObj.calculatedDate).getTime();
 
     return(
         <div className="ui feed">
@@ -167,7 +172,10 @@ function LegalEventItem(props){
                         </div>
                         <div className="summary">Due on {courtOrderObj.calculatedDate}</div>
                             <div className="text extra">
-                                {courtOrderObj.numDays/86400000} days before {courtOrderObj.selectedDate}
+                                {courtOrderObj.numDays} days {selectedDateToCompare > calculatedDateToCompare ? "before " : "after "}
+                                
+                                {courtOrderObj.selectedDate}
+                                
                                 <br />
                                 {courtOrderObj.clearDays ? <div class="ui red label">Clear Days</div> : null}
                             </div>

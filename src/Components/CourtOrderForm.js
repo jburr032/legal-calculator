@@ -42,7 +42,7 @@ export default class CourtOrderForm extends Component{
            
     calculateCourtOrderDates = () => {
         const courtOrderObj = {
-                type          : "Court Order",
+                type          : this.state.eventName,
                 objId         : uuidv4(), 
                eventName      : this.state.eventName,
                selectedDate   : this.state.selectedDate,
