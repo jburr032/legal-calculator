@@ -39,6 +39,7 @@ export default class EnglandCpr extends Component {
           "add",
         );
         
+        console.log(`This is the date check the timestamp: ${new Date(dateRulesObj.calculatedDate)}`)
         // Function to check whether the calculated date is a wknd or holiday - if so, then return an array with length of 3 dates in milliseconds (prevValidDate, invalidDate and nextValidDate)
         // or null otherwise for conditional rendering; assigns a list of objects  
         dateRulesObj.invalidDate = validDateSelector(dateRulesObj.calculatedDate, this.props.holidays, dateRulesObj.addBy);

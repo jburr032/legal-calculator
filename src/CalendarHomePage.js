@@ -37,9 +37,10 @@ export default class CalendarHomePage extends Component{
           holiday => holiday.date.slice(0, 4) === currYear
         );
         // Assigns an array of holidays in MS
-        fetchedHolidaysInMs = fetchedHolidayObjs.map(holiday =>
-          convertDateToMs(holiday.date)
-        );
+        fetchedHolidaysInMs = fetchedHolidayObjs.map(holiday =>{
+          console.log(`This is the HOLIDAY type: ${typeof(holiday.date)}`);
+          return convertDateToMs(holiday.date);
+        });
     
         this.setState({ fetchedHolidaysInMs });
         //this.passFetchedHolidays(fetchedHolidaysInMs);

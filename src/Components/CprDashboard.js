@@ -177,7 +177,6 @@ cprModalContent = (<><div class="ui large header" style={{ color: "white" }}>
             <Header style={calendarHeaderStyle} size="large">
               Civil Procedure Rules
             </Header>
-                  
                     <Calendar
                       className="react-calendar"
                       value={this.state.date}
@@ -185,9 +184,7 @@ cprModalContent = (<><div class="ui large header" style={{ color: "white" }}>
                       maxDate={new Date("2021-12-31")}
                       minDate={new Date('2015-01-01"')}
                     /> 
-                    {componentToRender}
-                
-              
+                    {componentToRender}              
           </Container>
         );}
 }

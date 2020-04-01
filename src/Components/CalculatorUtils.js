@@ -110,22 +110,28 @@ export function calculateLegalDates(
         );
       }
       else {
-        calculatedDate = new Date(
-          Math.abs(simpleMath[operator](daySum, calculateFrom))
-        ).getTime();
+        // Convert calculated date from millisecond to a new date object 
+        calculatedDate = new Date(Math.abs(simpleMath[operator](daySum, calculateFrom)));
+
+        // Then strip the timestamp from the date object to normalise the date object with the holidayMS by using convertDateToString()
+        // Get the stripped date object in milliseconds
+        calculatedDate = new Date(convertDateToString(calculatedDate)).getTime();
+      
       }
-    }
+    };
 
     return calculatedDate;
 
   }else{
     calculatedDate = calculateFrom;
     return calculatedDate;
-  };
+  }
 
 };
 
 export function validDateSelector(calculatedDate, holidaysArrayInMs, daySum){
+  console.log(`HolidaysArray: ${holidaysArrayInMs} calculatedDate: ${calculatedDate}`);
+
   if(checkNonBizDays(calculatedDate) || checkHolidays(calculatedDate, holidaysArrayInMs)){
     const subtract = "subtract";
     const add = "add";
@@ -143,7 +149,7 @@ export function validDateSelector(calculatedDate, holidaysArrayInMs, daySum){
         dateType        : "Current",
         calculatedDate  : currDate,
         diffInDays      : 0,
-        holiday         : (currDate in holidaysArrayInMs),
+        holiday         : (checkHolidays(calculatedDate, holidaysArrayInMs)),
       }, {
         dateType        : "Next",
         calculatedDate  : nextValidDate,
