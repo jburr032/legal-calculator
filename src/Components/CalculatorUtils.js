@@ -146,7 +146,7 @@ export function validDateSelector(calculatedDate, holidaysArrayInMs, daySum){
       }, {
         dateType        : "Current",
         calculatedDate  : currDate,
-        diffInDays      : 0,
+        diffInDays      : Math.floor(Math.abs(simpleMath[add](daySum, getDiffBetweenDates(currDate, calculatedDate, subtract))/86400000)),
         holiday         : (checkHolidays(calculatedDate, holidaysArrayInMs)),
       }, {
         dateType        : "Next",

@@ -57,6 +57,8 @@ export default class CourtOrderForm extends Component{
            const calculateFrom = courtOrderObj.selectedDate.getTime();
            const fetchedHolidaysInMs = this.props.fetchedHolidaysInMs;
            const operator = "subtract";
+
+           console.log(`daySum: ${daySum}`);
         
            courtOrderObj.calculatedDate = 
            calculateLegalDates(
@@ -66,7 +68,7 @@ export default class CourtOrderForm extends Component{
                 fetchedHolidaysInMs,
                 operator
            );
-
+           courtOrderObj.numDays = daySum/86400000;
            courtOrderObj.invalidDate = validDateSelector(courtOrderObj.calculatedDate, fetchedHolidaysInMs, daySum);
 
         return courtOrderObj;
